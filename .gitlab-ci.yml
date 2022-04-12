@@ -37,7 +37,7 @@ stages:
   - production
 
 .build_job:
-  image: circleci/android:api-30
+  image: circleci/android:api-31
   stage: build
   before_script:
     # Fix artifacts permissions
@@ -83,7 +83,7 @@ buildFdroidReleaseBundle:
 
 testFdroidDebug:
   allow_failure: true
-  image: circleci/android:api-30
+  image: circleci/android:api-31
   stage: test
   dependencies:
     - buildFdroidDebugApk
