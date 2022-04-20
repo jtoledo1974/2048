@@ -25,9 +25,9 @@ android {
         targetSdkVersion 30
         resConfigs 'en', 'zh', 'zh-rTW'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 51507
+        versionCode 51657
         // Manually bump the semver version part of the string as necessary
-        versionName '5.1.2-a3fe6196'
+        versionName '6.0.5-43c525bd'
     }
 
     buildFeatures.dataBinding true
