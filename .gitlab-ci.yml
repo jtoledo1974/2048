@@ -39,6 +39,8 @@ stages:
 .build_job:
   image: cimg/android:2023.11
   stage: build
+  tags:
+    - saas-linux-large-amd64
   before_script:
     # Fix artifacts permissions
     - sudo chown `whoami`:`groups` $VERSION_BUILD_GRADLE_LOCATION
