@@ -125,7 +125,7 @@ dependencies {
     completeImplementation project(':installer')
     completeImplementation project(':watcher')
     completeImplementation project(':open')
-    completeImplementation project(':ninja')
+    completeImplementation project(':sideplay')
 
     //debugImplementation project(':media')
 
