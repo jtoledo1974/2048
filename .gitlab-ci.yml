@@ -13,6 +13,8 @@ include:
     ../setup-wizard
   - pushd ../setup-wizard
   - sed -i -e "s/Compile/Implementation/g" -e "s/flavorDimensions 'compat'/flavorDimensions 'compat'\ndefaultConfig { vectorDrawables.useSupportLibrary = true }/" library/rules.gradle
+  # Fix `Namespace not specified` by AGP
+  - echo "android.namespace 'com.android.setupwizardlib'" >> library/standalone.gradle
   - popd
 
 .only-release: &only-release
@@ -138,7 +140,7 @@ publishInternal:
   before_script:
     - mv $google_play_service_account_api_key_json ~/.google-play.json
     - apk add build-base
-    - "export VERSION_CODE=$CI_PIPELINE_IID && echo $VERSION_CODE"
+    - 'export VERSION_CODE=$CI_PIPELINE_IID && echo $VERSION_CODE'
     # Install fastlane etc.
     - bundle config set path 'vendor/bundle'
     - bundle install -j $(nproc)
