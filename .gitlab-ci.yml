@@ -37,7 +37,7 @@ stages:
   - production
 
 .build_job:
-  image: cimg/android:2022.03
+  image: cimg/android:2023.12
   stage: build
   tags:
     - saas-linux-large-amd64
