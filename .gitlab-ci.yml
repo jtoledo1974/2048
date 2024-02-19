@@ -65,8 +65,6 @@ buildFdroidReleaseApk:
   extends: .build_job
   script:
     - bundle exec fastlane buildFdroidReleaseApk
-  environment:
-    name: production
 
 buildGooglePlayReleaseBundle:
   <<: *only-release
@@ -94,12 +92,10 @@ testFdroidDebug:
 
 publishInternal:
   <<: *only-release
-  environment:
-    name: production
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/ruby:alpine
   stage: internal
   dependencies:
-    - buildFdroidReleaseBundle
+    - buildGooglePlayReleaseBundle
   when: manual
   before_script:
     - mv $google_play_service_account_api_key_json ~/.google-play.json
@@ -120,11 +116,10 @@ publishInternal:
 
 .promote_job:
   <<: *only-release
-  environment:
-    name: production
   image: ruby:alpine
   when: manual
-  dependencies: []
+  dependencies:
+    - publishInternal
   before_script:
     - mv $google_play_service_account_api_key_json ~/.google-play.json
     - apk add build-base
