@@ -68,13 +68,11 @@ buildFdroidReleaseApk:
   environment:
     name: production
 
-buildFdroidReleaseBundle:
+buildGooglePlayReleaseBundle:
   <<: *only-release
   extends: .build_job
   script:
-    - bundle exec fastlane buildFdroidReleaseBundle
-  environment:
-    name: production
+    - bundle exec fastlane buildGooglePlayReleaseBundle
 
 testFdroidDebug:
   allow_failure: true
