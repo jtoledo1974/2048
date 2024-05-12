@@ -25,9 +25,9 @@ android {
         targetSdkVersion 33
         resourceConfigurations += ['en', 'zh', 'zh-rTW', 'pt-rBR']
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        versionCode 51507
+        versionCode 51773
         // Manually bump the semver version part of the string as necessary
-        versionName '5.1.2-a3fe6196'
+        versionName '6.4-c9837cc6'
         multiDexEnabled true
     }
 
