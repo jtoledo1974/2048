@@ -5,3 +5,4 @@
 [submodule "libs/setup-wizard"]
 	path = libs/setup-wizard
 	url = https://gitea.angry.im/PeterCxy/SetupWizardLibrary.git
+	branch = main
