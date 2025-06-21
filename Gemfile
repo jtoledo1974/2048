@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "abbrev"
 gem "fastlane"
 gem 'rufo', group: :development
 gem 'digest-crc', group: :development
