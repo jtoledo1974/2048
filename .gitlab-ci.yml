@@ -75,6 +75,7 @@ pre-release-build:
 buildFdroidDebugApk:
   extends: .build_job
   script:
+    - tree
     - bundle exec fastlane buildFdroidDebugApk
 
 # Generate Apk for direct use
