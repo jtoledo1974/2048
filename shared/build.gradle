@@ -11,6 +11,14 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
+    sourceSets {
+        main {
+            res {
+                exclude '**/analytics_tracker.xml'
+            }
+        }
+    }
+
     buildTypes {
         release { buildConfigField("boolean", "CRASHLYTICS_ENABLED", "true") }
         debug   { buildConfigField("boolean", "CRASHLYTICS_ENABLED", "false") }
