@@ -1,0 +1,58 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        // Disable 'NewApi' checking due to false errors in old version of lint tool, until sdk-tool-25.4 is deployed on Travis-CI.
+        disable 'NewApi'
+        textOutput 'stdout'
+        textReport true
+    }
+
+    adbOptions {
+        timeOutInMs 20 * 60 * 1000      // Extend to 20 minutes for Travis-CI.
+        installOptions "-d","-t"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'androidx.annotation:annotation:1.1.0'
+
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+android.libraryVariants.all { variant ->
+    String taskName = String.format("remove%sStubClasses", variant.name.capitalize())
+    task "${taskName}" {
+        doLast { delete "${buildDir}/intermediates/javac/${variant.name}/classes/android" }
+    }
+    variant.processJavaResources.dependsOn(taskName)
+}
+
