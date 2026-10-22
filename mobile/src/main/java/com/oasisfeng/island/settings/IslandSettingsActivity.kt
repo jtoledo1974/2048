@@ -193,10 +193,26 @@ class IslandSettingsFragment: android.preference.PreferenceFragment() {
 class IslandSettingsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // Restore settings only after the launcher puzzle has been opened.
+        super.onCreate(null)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
         if (intent.action != null && PendingIntentShuttle.collect(this)) return finish()    // Allow explicit launch intent without action
         setTheme(R.style.AppTheme_Settings)
-        fragmentManager.beginTransaction().replace(android.R.id.content, IslandSettingsFragment()).commit()
+        if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+            actionBar?.hide()
+            com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, Runnable {
+                actionBar?.show()
+                fragmentManager.beginTransaction().replace(android.R.id.content, IslandSettingsFragment()).commit()
+            })
+        } else fragmentManager.beginTransaction().replace(android.R.id.content, IslandSettingsFragment()).commit()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+            actionBar?.hide()
+            com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, Runnable { actionBar?.show() })
+        }
     }
 
     override fun onResume() {

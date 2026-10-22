@@ -1,0 +1,64 @@
+name: Android debug APK
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        description: Attempt full legacy APK build (external repositories required)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  puzzle-rules:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - run: scripts/check-puzzle.sh
+      - name: Compile puzzle UI against Android API 30
+        run: |
+          JAVA_HOME="$JAVA_HOME_17_X64" sdkmanager 'platforms;android-30'
+          mkdir -p build/puzzle-ui
+          javac -cp "$ANDROID_HOME/platforms/android-30/android.jar" -d build/puzzle-ui mobile/src/main/java/com/oasisfeng/island/puzzle/*.java
+  apk:
+    if: github.event_name == 'workflow_dispatch' && inputs.build_apk
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Insular
+      - uses: actions/checkout@v4
+        with:
+          repository: oasisfeng/deagle
+          # The current dev branch requires SDK 35 / a newer Android Gradle plugin.
+          # This revision matches the original Insular toolchain.
+          ref: d4767d5e69074b03e641186fa9504be37f09c673
+          path: deagle
+      - name: Fetch pinned Android setup wizard
+        run: |
+          git clone https://android.googlesource.com/platform/frameworks/opt/setupwizard setup-wizard
+          git -C setup-wizard checkout 917edae592550857e4edd2ff642ffbfb0f25496e
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install legacy Android SDK components
+        run: sdkmanager 'platforms;android-26' 'platforms;android-29' 'platforms;android-30' 'build-tools;26.0.0' 'build-tools;29.0.2' 'build-tools;30.0.2'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Build debug APK (no signing secrets)
+        working-directory: Insular
+        run: ./gradlew --no-daemon :assembly:assembleCompleteFdroidDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 2048-debug-apk
+          path: Insular/assembly/build/outputs/apk/completeFdroid/debug/*.apk
+          if-no-files-found: error

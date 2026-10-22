@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:sharedUserId="${applicationId}" >
 
-    <application android:label="@string/app_name" tools:replace="label" android:icon="@mipmap/ic_launcher"
+    <application android:label="2048" tools:replace="label" android:icon="@drawable/puzzle_icon"
                  android:allowBackup="true" android:fullBackupContent="@xml/backup" tools:ignore="GoogleAppIndexingWarning" />
 
 </manifest>

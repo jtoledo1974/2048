@@ -39,7 +39,18 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 public class MainActivity extends FragmentActivity {
 
 	@Override protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		// Do not restore management fragments behind the puzzle gate.
+		super.onCreate(null);
+		getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE);
+		com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, () -> continueOnCreate(null));
+	}
+
+	@Override protected void onRestart() {
+		super.onRestart();
+		com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, () -> {});
+	}
+
+	private void continueOnCreate(final Bundle savedInstanceState) {
 		if (! Users.isOwner()) {
 			if (Users.isProfileManagedByIsland()) {    // Should generally not run in profile, unless the managed profile provision is interrupted or manually provision is not complete.
 				onCreateInProfile();
