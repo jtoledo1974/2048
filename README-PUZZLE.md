@@ -16,7 +16,7 @@ The same application ID is retained to avoid breaking hardcoded engine and profi
 
 ## Validation
 
-Verified locally: standalone engine checks pass; PuzzleActivity and PuzzleEngine compile with JDK 11 against the official Android API 30 jar; modified XML files parse and git diff --check passes. Full APK and device provisioning have not yet been verified.
+Verified locally: standalone engine checks pass; PuzzleActivity and PuzzleEngine compile with JDK 11 against the official Android API 30 jar; modified XML files parse and git diff --check passes. The complete debug APK also builds successfully in GitHub Actions (run 39871994221, commit fe11907). The delivered APK is re-signed locally with a persistent private key; APK Signature Schemes v2 and v3, zip alignment, application label 2048, minimum API 27 and absence of testOnly are verified. Device provisioning remains untested until the mobile trial.
 
 Standalone rules checks:
 
