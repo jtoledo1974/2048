@@ -48,11 +48,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+// Framework stubs are needed by javac, but must never enter consumer classpaths or the APK.
 android.libraryVariants.all { variant ->
-    String taskName = String.format("remove%sStubClasses", variant.name.capitalize())
-    task "${taskName}" {
-        doLast { delete "${buildDir}/intermediates/javac/${variant.name}/classes/android" }
+    variant.javaCompileProvider.configure {
+        doLast { delete new File(destinationDir, 'android') }
     }
-    variant.processJavaResources.dependsOn(taskName)
 }
 
