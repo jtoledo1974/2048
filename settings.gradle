@@ -3,3 +3,4 @@ include 'assembly'
 include ':deagle'; project(':deagle').projectDir = new File('../deagle/library')
 include ':setup-wizard-lib'; project(':setup-wizard-lib').projectDir = new File('../setup-wizard/library'); project(':setup-wizard-lib').buildFileName = 'standalone.gradle'
 include ':condom'; project(':condom').projectDir = new File('third_party/condom')
+include ':libsuperuser'; project(':libsuperuser').projectDir = new File('third_party/libsuperuser')
