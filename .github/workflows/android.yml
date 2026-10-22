@@ -18,11 +18,16 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-30'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
           java-version: '11'
       - run: scripts/check-puzzle.sh
       - name: Compile puzzle UI against Android API 30
         run: |
-          JAVA_HOME="$JAVA_HOME_17_X64" sdkmanager 'platforms;android-30'
           mkdir -p build/puzzle-ui
           javac -cp "$ANDROID_HOME/platforms/android-30/android.jar" -d build/puzzle-ui mobile/src/main/java/com/oasisfeng/island/puzzle/*.java
   apk:
