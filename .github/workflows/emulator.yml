@@ -1,5 +1,8 @@
 name: Android 14 emulator smoke test
 on:
+  push:
+    paths:
+      - .github/workflows/emulator.yml
   workflow_dispatch:
     inputs:
       fixture_tag:
@@ -18,7 +21,7 @@ jobs:
       - name: Download exact signed APK fixture
         env:
           GH_TOKEN: ${{ github.token }}
-          FIXTURE_TAG: ${{ inputs.fixture_tag }}
+          FIXTURE_TAG: ${{ inputs.fixture_tag || 'emulator-test-0.1' }}
         run: |
           gh release download "$FIXTURE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.apk' --dir input
           sha256sum input/*.apk
