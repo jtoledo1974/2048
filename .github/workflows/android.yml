@@ -1,7 +1,6 @@
 name: Android debug APK
 on:
   push:
-  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,7 +35,7 @@ jobs:
         run: scripts/check-puzzle.sh
       - name: Build complete APK
         run: ./gradlew --no-daemon :assembly:assembleCompleteFdroidDebug
-      - name: Prepare upgrade fixture with this runner's temporary debug certificate
+      - name: Prepare APKs with one disposable upgrade test certificate
         run: python3 scripts/prepare-upgrade-fixture.py previous upgrade-fixture.apk
       - uses: actions/upload-artifact@v4
         with:
