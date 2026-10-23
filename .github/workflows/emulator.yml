@@ -10,6 +10,11 @@ on:
         default: '39871994221'
         required: true
         type: string
+      extra_profile:
+        description: Reproduce startup with a pre-existing unrelated work profile
+        default: true
+        required: true
+        type: boolean
 permissions:
   contents: read
   actions: read
@@ -45,6 +50,8 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
           script: python3 scripts/emulator-smoke.py input test-results
+        env:
+          EXTRA_PROFILE: ${{ inputs.extra_profile }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

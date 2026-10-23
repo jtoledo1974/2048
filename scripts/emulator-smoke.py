@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exercise the delivered APK on a disposable Android emulator; retain logs on failure."""
 from pathlib import Path
-import hashlib, re, subprocess, sys, time, traceback
+import hashlib, os, re, subprocess, sys, time, traceback
 import xml.etree.ElementTree as ET
 
 package = 'com.oasisfeng.island.fdroid'
@@ -38,6 +38,14 @@ def tap(x,y):
 try:
     (out/'apk-sha256.txt').write_text(hashlib.sha256(apk.read_bytes()).hexdigest()+'\n')
     (out/'device.txt').write_text(adb('shell','getprop'))
+    if os.environ.get('EXTRA_PROFILE', '').lower() != 'false':
+        creation=adb('shell','pm','create-user','--profileOf','0','--managed','Existing profile')
+        (out/'profile-creation.txt').write_text(creation)
+        match=re.search(r'id (\d+)',creation)
+        assert match, 'Could not create the unrelated profile regression fixture'
+        adb('shell','am','start-user','-w',match.group(1))
+        (out/'users.txt').write_text(adb('shell','pm','list','users'))
+        print('Created unrelated profile '+match.group(1),flush=True)
     print(adb('install','-r',str(apk)),flush=True)
     adb('logcat','-c')
     adb('shell','input','keyevent','KEYCODE_WAKEUP')
@@ -66,6 +74,8 @@ try:
     x1,y1,x2,y2=bounds(title);x=round((x1+x2)/2);y=round((y1+y2)/2)
     adb('shell','input','swipe',str(x),str(y),str(x),str(y),'1000')
     time.sleep(3);alive()
+    (out/'unlocked-activities.txt').write_text(adb('shell','dumpsys','activity','activities'))
+    assert 'com.oasisfeng.island.setup.SetupActivity' in (out/'unlocked-activities.txt').read_text(), 'Expected setup activity after unlock'
     ui=capture('03-unlocked')
     assert not any(n.attrib.get('content-desc','').startswith('2048 board.') for n in ui.iter('node')), 'Secret sequence did not unlock'
     print('PASS: secret sequence reaches the original application',flush=True)
