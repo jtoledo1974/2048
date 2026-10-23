@@ -50,9 +50,20 @@ public class DevicePolicies {
 	}
 
 	public static boolean isProfileOwner(final Context context, final UserHandle profile) {
-		if (SDK_INT >= P) return new DevicePolicies(context, profile).isProfileOwner();
-		final Optional<ComponentName> profile_owner = getProfileOwnerAsUser(context, Users.toId(profile));
-		return profile_owner != null && profile_owner.isPresent() && Modules.MODULE_ENGINE.equals(profile_owner.get().getPackageName());
+		try {
+			if (profile.equals(Process.myUserHandle())) return new DevicePolicies(context).isProfileOwner();
+			// Dual-app / second-space profiles may be visible without containing our engine.
+			// Do not construct a cross-user policy context for an unrelated profile.
+			if (new LauncherAppsCompat(context).getApplicationInfoNoThrows(Modules.MODULE_ENGINE, 0, profile) == null) return false;
+			if (SDK_INT >= P) return new DevicePolicies(context, profile).isProfileOwner();
+			final Optional<ComponentName> profile_owner = getProfileOwnerAsUser(context, Users.toId(profile));
+			return profile_owner != null && profile_owner.isPresent() && Modules.MODULE_ENGINE.equals(profile_owner.get().getPackageName());
+		} catch (final SecurityException e) {
+			// Recent Android / OEM policies can deny ownership queries for another user.
+			// An unverifiable profile must not be treated as ours or prevent startup.
+			Log.w(TAG, "Cannot verify ownership of profile " + Users.toId(profile), e);
+			return false;
+		}
 	}
 
 	public static @Nullable Optional<ComponentName> getProfileOwnerAsUser(final Context context, final UserHandle profile) {
@@ -195,7 +206,7 @@ public class DevicePolicies {
 	@RequiresApi(P) private DevicePolicies(final Context context, final UserHandle profile) {
 		ApplicationInfo profile_app_info = new LauncherAppsCompat(context).getApplicationInfoNoThrows(Modules.MODULE_ENGINE, 0, profile);
 		if (profile_app_info == null) {		// Make up the required profile ApplicationInfo
-			profile_app_info = context.getApplicationInfo();
+			profile_app_info = new ApplicationInfo(context.getApplicationInfo());
 			profile_app_info.uid = UserHandles.getUid(UserHandles.getIdentifier(profile), UserHandles.getAppId(Process.myUid()));
 		}
 		try {
