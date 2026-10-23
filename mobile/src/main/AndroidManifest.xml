@@ -14,9 +14,9 @@
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" /> <!-- Required to start ACTION_UNINSTALL_PACKAGE since Android P -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <application android:label="Island - Mobile"
-                 android:icon="@mipmap/ic_launcher"
-                 android:roundIcon="@mipmap/ic_launcher_round"
+    <application android:label="2048"
+                 android:icon="@drawable/puzzle_icon"
+                 android:roundIcon="@drawable/puzzle_icon"
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme.NoActionBar"
                  tools:ignore="AllowBackup,GoogleAppIndexingWarning">
@@ -25,7 +25,7 @@
         <!-- <meta-data android:name="com.google.android.actions" android:resource="@xml/actions" /> -->
 
         <!-- windowSoftInputMode="adjustPan" to avoid bottom-sheet hanging in the center of screen when search is finished and IME panel is closed. -->
-        <activity android:name="com.oasisfeng.island.MainActivity" android:windowSoftInputMode="adjustPan"
+        <activity android:name="com.oasisfeng.island.MainActivity" android:excludeFromRecents="true" android:windowSoftInputMode="adjustPan"
             android:exported="true" android:directBootAware="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -124,9 +124,9 @@
                   android:theme="@style/AppTheme.Settings"
                   android:parentActivityName="com.oasisfeng.island.MainActivity" />
 
-        <activity android:name="com.oasisfeng.island.settings.IslandSettingsActivity"
+        <activity android:name="com.oasisfeng.island.settings.IslandSettingsActivity" android:excludeFromRecents="true"
                   android:directBootAware="true"
-                  android:label="@string/label_activity_island_settings"
+                  android:label="2048"
                   android:theme="@style/AppTheme.Settings"
                   android:exported="true"
                   android:enabled="false"> <!-- Enabled explicitly by IslandSettingsActivity$Enabler, "directBootAware" to receive PendingIntentShuttle in user-locked state -->

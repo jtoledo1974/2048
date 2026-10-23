@@ -266,11 +266,30 @@ import com.oasisfeng.island.util.DevicePolicies.PreferredActivity
 class IslandSettingsActivity: CallerAwareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+        if (isLauncherIntent()) {
+            actionBar?.hide()
+            com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, Runnable { openSettings() })
+        } else openSettings()
+    }
+
+    private fun isLauncherIntent() = intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
+
+    private fun openSettings() {
+        actionBar?.show()
         if (callingPackage != packageName) actionBar?.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_HOME)
         else actionBar?.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP, ActionBar.DISPLAY_HOME_AS_UP)
         fragmentManager.beginTransaction().replace(android.R.id.content, IslandSettingsFragment()).commit()
-        IslandNameManager.syncNameToParentProfile(this)     // In case previous name synchronization failed
+        IslandNameManager.syncNameToParentProfile(this)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (isLauncherIntent()) {
+            actionBar?.hide()
+            com.oasisfeng.island.puzzle.PuzzleActivity.attach(this, Runnable { actionBar?.show() })
+        }
     }
 
     class Enabler: BroadcastReceiver() {    // One-time enabler for
