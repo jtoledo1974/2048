@@ -1,0 +1,47 @@
+name: Android 14 emulator smoke test
+on:
+  workflow_dispatch:
+    inputs:
+      fixture_tag:
+        description: Draft release containing the exact signed APK to test
+        default: emulator-test-0.1
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  emulator:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download exact signed APK fixture
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FIXTURE_TAG: ${{ inputs.fixture_tag }}
+        run: |
+          gh release download "$FIXTURE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.apk' --dir input
+          sha256sum input/*.apk
+      - name: Enable hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Boot Android 14 and exercise launcher
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          cores: 2
+          ram-size: 2048M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
+          script: python3 scripts/emulator-smoke.py input test-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android14-smoke-results
+          path: test-results/
+          if-no-files-found: warn
