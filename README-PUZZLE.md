@@ -12,7 +12,7 @@ The board, score and best score are saved locally. The game needs no network acc
 
 This is a discreet launcher, not an authentication or encryption mechanism. Android Settings, package inspection, work-profile indicators, existing notification and deep-link flows can still reveal Insular. Internal screens retain the upstream functionality and wording. The management launcher is excluded from Recents; both management launcher activities disable screenshots. Existing internal entry points remain compatible.
 
-The same application ID is retained to avoid breaking hardcoded engine and profile provisioning contracts. An APK signed with a new key cannot update an existing F-Droid installation. Do not remove an existing profile to install an untested build.
+The same application ID and shared user ID are retained to avoid breaking hardcoded engine and profile provisioning contracts. An APK signed with a new key cannot update an existing F-Droid installation. Do not remove an existing profile to install an untested build.
 
 ## Source and validation
 

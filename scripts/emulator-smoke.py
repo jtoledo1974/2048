@@ -46,7 +46,12 @@ try:
         adb('shell','am','start-user','-w',match.group(1))
         (out/'users.txt').write_text(adb('shell','pm','list','users'))
         print('Created unrelated profile '+match.group(1),flush=True)
+    previous = os.environ.get('PREVIOUS_APK')
+    if previous:
+        print(adb('install', previous), flush=True)
+        print('Installed previous APK for update compatibility check', flush=True)
     print(adb('install','-r',str(apk)),flush=True)
+    if previous: print('PASS: update from previous APK without uninstall', flush=True)
     adb('logcat','-c')
     adb('shell','input','keyevent','KEYCODE_WAKEUP')
     adb('shell','wm','dismiss-keyguard',check=False)
@@ -85,7 +90,7 @@ try:
     time.sleep(2);alive();ui=capture('04-relaunch')
     assert any(n.attrib.get('content-desc','').startswith('2048 board.') for n in ui.iter('node'))
     print('PASS: relaunch restores the puzzle gate',flush=True)
-    (out/'result.txt').write_text('PASS: startup, gameplay, secret unlock and relaunch\n')
+    (out/'result.txt').write_text('PASS: update compatibility, startup, gameplay, secret unlock and relaunch\n')
 except Exception:
     (out/'failure.txt').write_text(traceback.format_exc())
     traceback.print_exc()
